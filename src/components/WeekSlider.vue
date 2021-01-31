@@ -1,5 +1,5 @@
 <template>
-  <div class="week-slider">
+  <div class="week-slider" ref="slider" @touchstart="handleTouchStart">
     <div class="slider-item" v-for="(arr, index) in dateArr" :key="index">
       <div class="day-box" v-for="(day, idx) in arr" :key="idx">
         <div class="week-str">{{ day.weekStr }}</div>
@@ -30,6 +30,9 @@ export default {
   created () {
     dayjs.locale('zh-cn')
     this.getToday()
+    this.$nextTick(() => {
+      this.initPosition()
+    })
   },
   methods: {
     getToday () {
@@ -38,7 +41,9 @@ export default {
     },
     generateData () {
       this.dateArr = [
-        this.generateAWeekData(this.today.startOf('week').format('YYYY-MM-DD'))
+        this.generateAWeekData(this.today.subtract(7, 'day').format('YYYY-MM-DD')),
+        this.generateAWeekData(this.today.startOf('week').format('YYYY-MM-DD')),
+        this.generateAWeekData(this.today.add(7, 'day').format('YYYY-MM-DD'))
       ]
     },
     generateAWeekData (start) {
@@ -51,6 +56,12 @@ export default {
         })
       }
       return arr
+    },
+    initPosition () {
+      this.$refs.slider.style.transform = 'translateX(-100%)'
+    },
+    handleTouchStart (e) {
+      console.log(e)
     }
   }
 }
@@ -62,12 +73,15 @@ export default {
   height: 80px;
   border: 1px solid #f40;
   margin: 0;
+  display: flex;
+  position: relative;
 }
 .slider-item {
+  flex-shrink: 0;
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   .day-box {
     height: 100%;
