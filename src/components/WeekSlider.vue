@@ -6,6 +6,7 @@
     @touchstart="handleTouchStart"
     @touchmove="handleTouchMove"
     @touchend="handleTouchEnd"
+    @transitionend="handleTransitionEnd"
   >
     <div class="slider-item" v-for="(arr, index) in dateArr" :key="index">
       <div class="day-box" v-for="(day, idx) in arr" :key="idx">
@@ -67,6 +68,7 @@ export default {
       for (let i = 0; i < 7; i++) {
         const date = dayjs(start).add(i, 'day')
         arr.push({
+          date: date,
           weekStr: date.format('dd'),
           dateNo: date.format('DD')
         })
@@ -86,31 +88,40 @@ export default {
     handleTouchMove (e) {
       const { clientX: x } = e.changedTouches[0]
       const distance = x - this.startPos.x
-      console.log(distance)
       this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex) + distance}px)`
       e.preventDefault()
     },
     handleTouchEnd (e) {
       const { clientX: x } = e.changedTouches[0]
       const distance = x - this.startPos.x
+      const isSwitch = Math.abs(distance) > this.range * this.screenWidth
       if (distance > 0) {
         console.log('右')
-        if (Math.abs(distance) > this.range * this.screenWidth) {
+        if (isSwitch) {
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex--
+          // console.log(this.dateArr)
         } else {
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex = 1
         }
       } else {
         console.log('左')
-        if (Math.abs(distance) > this.range * this.screenWidth) {
+        if (isSwitch) {
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex++
         } else {
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex = 1
         }
+      }
+    },
+    handleTransitionEnd () {
+      this.$refs.slider.style.transition = 'none'
+      this.dateArr.pop()
+      this.dateArr.unshift(this.generateAWeekData(this.dateArr[0][0].date.subtract(7, 'day').format('YYYY-MM-DD')))
+      if (this.activeIndex === 0) {
+        this.activeIndex = 1
       }
     }
   }
