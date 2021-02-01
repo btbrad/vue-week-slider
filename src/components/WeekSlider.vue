@@ -39,7 +39,8 @@ export default {
       }, // 初始pos
       activeIndex: 1,
       range: 0.3,
-      screenWidth: 0
+      screenWidth: 0,
+      direction: '' // 滑动方向
     }
   },
   created () {
@@ -98,6 +99,7 @@ export default {
       if (distance > 0) {
         console.log('右')
         if (isSwitch) {
+          this.direction = 'right'
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex--
           // console.log(this.dateArr)
@@ -108,6 +110,7 @@ export default {
       } else {
         console.log('左')
         if (isSwitch) {
+          this.direction = 'left'
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex++
         } else {
@@ -118,10 +121,19 @@ export default {
     },
     handleTransitionEnd () {
       this.$refs.slider.style.transition = 'none'
-      this.dateArr.pop()
-      this.dateArr.unshift(this.generateAWeekData(this.dateArr[0][0].date.subtract(7, 'day').format('YYYY-MM-DD')))
-      if (this.activeIndex === 0) {
-        this.activeIndex = 1
+      if (this.direction === 'right') {
+        this.dateArr.pop()
+        this.dateArr.unshift(this.generateAWeekData(this.dateArr[0][0].date.subtract(7, 'day').format('YYYY-MM-DD')))
+        if (this.activeIndex === 0) {
+          this.activeIndex = 1
+        }
+      }
+      if (this.direction === 'left') {
+        this.dateArr.shift()
+        this.dateArr.push(this.generateAWeekData(this.dateArr[1][0].date.add(7, 'day').format('YYYY-MM-DD')))
+        if (this.activeIndex === 2) {
+          this.activeIndex = 1
+        }
       }
     }
   }
