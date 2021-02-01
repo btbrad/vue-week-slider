@@ -1,5 +1,12 @@
 <template>
-  <div class="week-slider" ref="slider" @touchstart="handleTouchStart">
+  <div
+    class="week-slider"
+    ref="slider"
+    :style="{'transform': `translateX(${-100 * activeIndex}%)`}"
+    @touchstart="handleTouchStart"
+    @touchmove="handleTouchMove"
+    @touchend="handleTouchEnd"
+  >
     <div class="slider-item" v-for="(arr, index) in dateArr" :key="index">
       <div class="day-box" v-for="(day, idx) in arr" :key="idx">
         <div class="week-str">{{ day.weekStr }}</div>
@@ -24,7 +31,14 @@ export default {
   data () {
     return {
       today: '',
-      dateArr: [] // 当前的日期数据
+      dateArr: [], // 当前的日期数据
+      startPos: {
+        x: 0,
+        y: 0
+      }, // 初始pos
+      activeIndex: 1,
+      range: 0.3,
+      screenWidth: 0
     }
   },
   created () {
@@ -32,6 +46,8 @@ export default {
     this.getToday()
     this.$nextTick(() => {
       this.initPosition()
+      // console.log(123, this.$refs.slider.getBoundingClientRect())
+      this.screenWidth = this.$refs.slider.getBoundingClientRect().width
     })
   },
   methods: {
@@ -58,10 +74,44 @@ export default {
       return arr
     },
     initPosition () {
-      this.$refs.slider.style.transform = 'translateX(-100%)'
+      // this.$refs.slider.style.transform = 'translateX(-100%)'
     },
     handleTouchStart (e) {
-      console.log(e)
+      this.$refs.slider.style.transition = 'none'
+      this.startPos = {
+        x: e.changedTouches[0].clientX,
+        y: e.changedTouches[0].clientY
+      }
+    },
+    handleTouchMove (e) {
+      const { clientX: x } = e.changedTouches[0]
+      const distance = x - this.startPos.x
+      console.log(distance)
+      this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex) + distance}px)`
+      e.preventDefault()
+    },
+    handleTouchEnd (e) {
+      const { clientX: x } = e.changedTouches[0]
+      const distance = x - this.startPos.x
+      if (distance > 0) {
+        console.log('右')
+        if (Math.abs(distance) > this.range * this.screenWidth) {
+          this.$refs.slider.style.transition = 'all 1s'
+          this.activeIndex--
+        } else {
+          this.$refs.slider.style.transition = 'all 1s'
+          this.activeIndex = 1
+        }
+      } else {
+        console.log('左')
+        if (Math.abs(distance) > this.range * this.screenWidth) {
+          this.$refs.slider.style.transition = 'all 1s'
+          this.activeIndex++
+        } else {
+          this.$refs.slider.style.transition = 'all 1s'
+          this.activeIndex = 1
+        }
+      }
     }
   }
 }
