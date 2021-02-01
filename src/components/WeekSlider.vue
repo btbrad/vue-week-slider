@@ -61,7 +61,7 @@ export default {
       this.dateArr = [
         this.generateAWeekData(this.today.subtract(7, 'day').format('YYYY-MM-DD')),
         this.generateAWeekData(this.today.startOf('week').format('YYYY-MM-DD')),
-        this.generateAWeekData(this.today.add(7, 'day').format('YYYY-MM-DD'))
+        this.generateAWeekData(this.today.startOf('week').add(7, 'day').format('YYYY-MM-DD'))
       ]
     },
     generateAWeekData (start) {
