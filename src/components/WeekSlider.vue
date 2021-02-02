@@ -40,7 +40,8 @@ export default {
       activeIndex: 1,
       range: 0.3,
       screenWidth: 0,
-      direction: '' // 滑动方向
+      direction: '', // 滑动方向
+      isSwitch: false // 需要滑动页面
     }
   },
   created () {
@@ -95,10 +96,10 @@ export default {
     handleTouchEnd (e) {
       const { clientX: x } = e.changedTouches[0]
       const distance = x - this.startPos.x
-      const isSwitch = Math.abs(distance) > this.range * this.screenWidth
+      this.isSwitch = Math.abs(distance) > this.range * this.screenWidth
       if (distance > 0) {
         console.log('右')
-        if (isSwitch) {
+        if (this.isSwitch) {
           this.direction = 'right'
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex--
@@ -106,21 +107,29 @@ export default {
         } else {
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex = 1
+          this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex)}px)`
         }
       } else {
         console.log('左')
-        if (isSwitch) {
+        if (this.isSwitch) {
           this.direction = 'left'
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex++
         } else {
           this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex = 1
+          this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex)}px)`
         }
       }
     },
     handleTransitionEnd () {
+      /**
+       * 停止过渡动画后再处理数据，不然会再次触发动画
+       */
       this.$refs.slider.style.transition = 'none'
+      if (!this.isSwitch) {
+        return
+      }
       if (this.direction === 'right') {
         this.dateArr.pop()
         this.dateArr.unshift(this.generateAWeekData(this.dateArr[0][0].date.subtract(7, 'day').format('YYYY-MM-DD')))
