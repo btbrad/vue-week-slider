@@ -11,7 +11,7 @@
     <div class="slider-item" v-for="(arr, index) in dateArr" :key="index">
       <div :class="['day-box', {'today': today.isSame(day.date, 'day')}]" v-for="(day, idx) in arr" :key="idx">
         <div class="week-str">{{ day.weekStr }}</div>
-        <div class="day-str">{{ day.dateNo }}</div>
+        <div class="day-str" @click="handleDateClick(day)">{{ day.dateNo }}</div>
       </div>
     </div>
   </div>
@@ -130,6 +130,10 @@ export default {
           this.activeIndex = 1
         }
       }
+      this.$emit('week-switch', this.dateArr[this.activeIndex])
+    },
+    handleDateClick (day) {
+      this.$emit('date-click', day.date.format('YYYY-MM-DD'))
     }
   }
 }

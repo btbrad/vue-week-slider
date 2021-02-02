@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <week-slider></week-slider>
+    <week-slider @date-click="handleDateClick" @week-switch="handleWeekChange"></week-slider>
   </div>
 </template>
 
@@ -11,6 +11,14 @@ export default {
   name: 'App',
   components: {
     WeekSlider
+  },
+  methods: {
+    handleDateClick (val) {
+      console.log('选中日期', val)
+    },
+    handleWeekChange (val) {
+      console.log('切换周', val)
+    }
   }
 }
 </script>
