@@ -9,7 +9,7 @@
     @transitionend="handleTransitionEnd"
   >
     <div class="slider-item" v-for="(arr, index) in dateArr" :key="index">
-      <div class="day-box" v-for="(day, idx) in arr" :key="idx">
+      <div :class="['day-box', {'today': today.isSame(day.date, 'day')}]" v-for="(day, idx) in arr" :key="idx">
         <div class="week-str">{{ day.weekStr }}</div>
         <div class="day-str">{{ day.dateNo }}</div>
       </div>
@@ -166,6 +166,12 @@ export default {
     flex-wrap: wrap;
     .week-str, .day-str {
       width: 100%;
+    }
+    &.today {
+      .day-str {
+        background-color: #f40;
+        border-radius: 50%;
+      }
     }
   }
 }
