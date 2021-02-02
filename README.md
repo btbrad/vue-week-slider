@@ -1,5 +1,5 @@
 # vue-week-slider
-
+> 基于vue和dayjs的横向周切换组件(移动端)
 ## Project setup
 ```
 npm install
@@ -9,16 +9,3 @@ npm install
 ```
 npm run serve
 ```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
