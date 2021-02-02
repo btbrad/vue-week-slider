@@ -58,7 +58,7 @@ export default {
     },
     generateData () {
       this.dateArr = [
-        this.generateAWeekData(this.today.subtract(7, 'day').format('YYYY-MM-DD')),
+        this.generateAWeekData(this.today.startOf('week').subtract(7, 'day').format('YYYY-MM-DD')),
         this.generateAWeekData(this.today.startOf('week').format('YYYY-MM-DD')),
         this.generateAWeekData(this.today.startOf('week').add(7, 'day').format('YYYY-MM-DD'))
       ]
@@ -139,7 +139,6 @@ export default {
 .week-slider {
   width: 100%;
   height: 80px;
-  border: 1px solid #f40;
   margin: 0;
   display: flex;
   position: relative;
@@ -151,6 +150,15 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  &:nth-of-type(1) {
+    border: 1px solid #f40;
+  }
+  &:nth-of-type(2) {
+    border: 1px solid #0f0;
+  }
+  &:nth-of-type(1) {
+    border: 1px solid #ff0;
+  }
   .day-box {
     height: 100%;
     display: flex;
