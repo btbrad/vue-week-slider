@@ -11,7 +11,7 @@
     <div class="slider-item" v-for="(arr, index) in dateArr" :key="index">
       <div :class="['day-box', {'today': today.isSame(day.date, 'day')}]" v-for="(day, idx) in arr" :key="idx">
         <div class="week-str">{{ day.weekStr }}</div>
-        <div class="day-str" @click="handleDateClick(day)">{{ day.dateNo }}</div>
+        <div class="day-str" @click="isTouchable && handleDateClick(day)">{{ day.dateNo }}</div>
       </div>
     </div>
   </div>
@@ -41,7 +41,8 @@ export default {
       range: 0.3,
       screenWidth: 0,
       direction: '', // 滑动方向
-      isSwitch: false // 需要滑动页面
+      isSwitch: false, // 需要滑动页面
+      isTouchable: true // 当前是否可滑动
     }
   },
   created () {
@@ -76,6 +77,9 @@ export default {
       return arr
     },
     handleTouchStart (e) {
+      if (!this.isTouchable) {
+        return
+      }
       this.$refs.slider.style.transition = 'none'
       this.startPos = {
         x: e.changedTouches[0].clientX,
@@ -83,17 +87,24 @@ export default {
       }
     },
     handleTouchMove (e) {
+      if (!this.isTouchable) {
+        return
+      }
       const { clientX: x } = e.changedTouches[0]
       const distance = x - this.startPos.x
       this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex) + distance}px)`
       e.preventDefault()
     },
     handleTouchEnd (e) {
+      if (!this.isTouchable) {
+        return
+      }
       const { clientX: x } = e.changedTouches[0]
       const distance = x - this.startPos.x
       this.isSwitch = Math.abs(distance) > this.range * this.screenWidth
       this.$refs.slider.style.transition = 'all 1s'
       if (this.isSwitch) {
+        this.isTouchable = false
         if (distance > 0) {
           console.log('右')
           this.direction = 'right'
@@ -131,6 +142,7 @@ export default {
         }
       }
       this.$emit('week-switch', this.dateArr[this.activeIndex])
+      this.isTouchable = true
     },
     handleDateClick (day) {
       this.$emit('date-click', day.date.format('YYYY-MM-DD'))
