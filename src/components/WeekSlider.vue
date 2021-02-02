@@ -48,8 +48,6 @@ export default {
     dayjs.locale('zh-cn')
     this.getToday()
     this.$nextTick(() => {
-      this.initPosition()
-      // console.log(123, this.$refs.slider.getBoundingClientRect())
       this.screenWidth = this.$refs.slider.getBoundingClientRect().width
     })
   },
@@ -77,9 +75,6 @@ export default {
       }
       return arr
     },
-    initPosition () {
-      // this.$refs.slider.style.transform = 'translateX(-100%)'
-    },
     handleTouchStart (e) {
       this.$refs.slider.style.transition = 'none'
       this.startPos = {
@@ -97,29 +92,20 @@ export default {
       const { clientX: x } = e.changedTouches[0]
       const distance = x - this.startPos.x
       this.isSwitch = Math.abs(distance) > this.range * this.screenWidth
-      if (distance > 0) {
-        console.log('右')
-        if (this.isSwitch) {
+      this.$refs.slider.style.transition = 'all 1s'
+      if (this.isSwitch) {
+        if (distance > 0) {
+          console.log('右')
           this.direction = 'right'
-          this.$refs.slider.style.transition = 'all 1s'
           this.activeIndex--
-          // console.log(this.dateArr)
         } else {
-          this.$refs.slider.style.transition = 'all 1s'
-          this.activeIndex = 1
-          this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex)}px)`
+          console.log('左')
+          this.direction = 'left'
+          this.activeIndex++
         }
       } else {
-        console.log('左')
-        if (this.isSwitch) {
-          this.direction = 'left'
-          this.$refs.slider.style.transition = 'all 1s'
-          this.activeIndex++
-        } else {
-          this.$refs.slider.style.transition = 'all 1s'
-          this.activeIndex = 1
-          this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex)}px)`
-        }
+        this.activeIndex = 1
+        this.$refs.slider.style.transform = `translateX(${-(this.screenWidth * this.activeIndex)}px)`
       }
     },
     handleTransitionEnd () {
